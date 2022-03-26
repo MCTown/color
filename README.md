@@ -1,0 +1,2 @@
+# color
+Colored player names.
