@@ -1,0 +1,19 @@
+{
+	"id": "color",
+	"version": "0.1.0",
+	"name": "Color",
+	"description": {
+		"zh_ch": "改变用户名颜色"
+	},
+	"author": [
+		"xiaoyu2006"
+	],
+	"link": "https://github.com/MCTown/color",
+	"dependencies": {
+		"mcdreforged": ">=2"
+	},
+	"entrypoint": "color",
+	"resources": [
+		"LICENSE"
+	]
+}
