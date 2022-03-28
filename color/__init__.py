@@ -2,21 +2,24 @@ from mcdreforged.api.all import *
 from typing import Dict
 from .data import ColorData
 
-data: ColorData = None
+PREFIX = '!!color'
+
+color_data: ColorData = None
+
 
 def on_load(server: PluginServerInterface, old):
-    global data
-    data = ColorData(server)
-    server.register_help_message('!!color', '改变用户名颜色')
+    global color_data
+    color_data = ColorData(server)
+    server.register_help_message(PREFIX, '改变用户名颜色')
     server.register_command(
-        Literal('!!color').then(
+        Literal(PREFIX).then(
             Literal('create').then(Text('color').runs(create))
         )
         .then(
             Literal('add').then(Text('player').then(Text('color').runs(add)))
         )
         .then(
-            Literal('change').then(Text('color').runs(change))
+            Literal('set').then(Text('color').runs(set_color))
         )
         .then(
             Literal('list').runs(list_all)
@@ -25,10 +28,11 @@ def on_load(server: PluginServerInterface, old):
 
 
 def create(src: CommandSource, ctx: Dict):
-    global data
+    global color_data
     if src.has_permission_higher_than(3):
         try:
-            data.create(src.get_server().as_plugin_server_interface(), ctx['color'])
+            color_data.create(
+                src.get_server().as_plugin_server_interface(), ctx['color'])
         except RuntimeError as e:
             src.reply(str(e))
     else:
@@ -36,26 +40,28 @@ def create(src: CommandSource, ctx: Dict):
 
 
 def add(src: CommandSource, ctx: Dict):
-    global data
+    global color_data
     try:
-        data.add_user(src.get_server().as_plugin_server_interface(), ctx['player'], ctx['color'])
+        color_data.add_user(src.get_server().as_plugin_server_interface(),
+                      ctx['player'], ctx['color'])
         src.reply('成功添加{}到{}中'.format(ctx['player'], ctx['color']))
     except RuntimeError as e:
         src.reply(str(e))
 
 
-def change(src: CommandSource, ctx: Dict):
-    global data
+def set_color(src: CommandSource, ctx: Dict):
+    global color_data
     if not src.is_player:
         src.reply('只有玩家才可以执行该命令')
         return
     # src is PlayerCommandSource
     try:
-        data.change_color(src.get_server().as_plugin_server_interface(), src.player, ctx['color'])
+        color_data.set_color(
+            src.get_server().as_plugin_server_interface(), src.player, ctx['color'])
     except RuntimeError as e:
         src.reply(str(e))
 
 
 def list_all(src: CommandSource, ctx: Dict):
-    global data
-    src.reply(list(data.data.keys()))
+    global color_data
+    src.reply(list(color_data.data.keys()))

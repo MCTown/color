@@ -6,5 +6,6 @@ Colored player names.
 
 ## TODO
 
-- [ ] Better input validation and error handling for admin commands.
-- [ ] Better in-game documentation.
+- [x] Better input validation and error handling for admin commands
+- [ ] More features
+- [ ] Better in-game documentation
