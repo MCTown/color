@@ -41,11 +41,18 @@ class ColorData:
             self.data[color] = []
             self.save(server)
 
-    def add_user(self, server: PluginServerInterface, player: str, color: str):
+    def add_player(self, server: PluginServerInterface, player: str, color: str):
         self._check_color_exists(color)
         if player in self.data[color]:
             raise RuntimeError('{}已经在{}组中'.format(player, color))
         self.data[color].append(player)
+        self.save(server)
+
+    def delete_player(self, server: PluginServerInterface, player: str, color: str):
+        self._check_color_exists(color)
+        if not player in self.data[color]:
+            raise RuntimeError('{}已经不在{}中'.format(player, color))
+        self.data[color].remove(player)
         self.save(server)
 
     def set_color(self, server: PluginServerInterface, player: str, color: str):

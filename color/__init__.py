@@ -22,6 +22,10 @@ def on_load(server: PluginServerInterface, old):
             Literal('set').then(Text('color').runs(set_color))
         )
         .then(
+            Literal('delete').then(
+                Text('player').then(Text('color').runs(delete)))
+        )
+        .then(
             Literal('list').runs(list_all)
         )
     )
@@ -42,8 +46,8 @@ def create(src: CommandSource, ctx: Dict):
 def add(src: CommandSource, ctx: Dict):
     global color_data
     try:
-        color_data.add_user(src.get_server().as_plugin_server_interface(),
-                      ctx['player'], ctx['color'])
+        color_data.add_player(src.get_server().as_plugin_server_interface(),
+                              ctx['player'], ctx['color'])
         src.reply('成功添加{}到{}中'.format(ctx['player'], ctx['color']))
     except RuntimeError as e:
         src.reply(str(e))
@@ -62,6 +66,20 @@ def set_color(src: CommandSource, ctx: Dict):
         src.reply(str(e))
 
 
+def delete(src: CommandSource, ctx: Dict):
+    global color_data
+    if src.has_permission_higher_than(3):
+        try:
+            color_data.delete_player(src.get_server().as_plugin_server_interface(),
+                                     ctx['player'], ctx['color'])
+            src.reply('成功从{}中移除{}'.format(ctx['color'], ctx['player']))
+        except RuntimeError as e:
+            src.reply(str(e))
+    else:
+        src.reply('权限不足')
+
+
 def list_all(src: CommandSource, ctx: Dict):
+    # stub
     global color_data
     src.reply(list(color_data.data.keys()))
